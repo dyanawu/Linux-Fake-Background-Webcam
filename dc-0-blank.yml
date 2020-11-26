@@ -1,15 +1,23 @@
-version: '3'
+version: '3.7'
 services:
     bodypix:
         image: bodypix
+        init: true
         build:
             context: ./bodypix
+        networks:
+            - fakecam
         read_only: true
+        ports:
+            - ${PORT_BODYPIX}:9000
 
     fakecam:
         image: fakecam
+        init: true
         build:
             context: ./fakecam
+        networks:
+            - fakecam
         read_only: true
         volumes:
           - /home/dwu/media/fake-webcam/images/<>:/src/background.jpg:ro
@@ -20,4 +28,9 @@ services:
             - /dev/video2:/dev/video2
         depends_on:
             - bodypix
-        entrypoint: [ 'python3', '-u', 'fake.py', '-B', 'http://bodypix:9000/', "--no-foreground"]
+        command: ["--bodypix-url", "http://bodypix:9000/",
+                  "-b", "background-custom", "-f", "foreground-custom" , "-m", "foreground-mask-custom",
+                  "--webcam-path", "/dev/video0", "--v4l2loopback-path", "/dev/video2"]
+
+networks:
+    fakecam:

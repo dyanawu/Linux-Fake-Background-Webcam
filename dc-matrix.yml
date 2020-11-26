@@ -12,14 +12,12 @@ services:
             context: ./fakecam
         read_only: true
         volumes:
-          - /home/pczarkowski/Pictures/bg.jpg:/src/background.jpg:ro
-        #   - /path/to/foreground.jpg:/src/foreground.jpg:ro
-        #   - /path/to/foreground-mask.png:/src/foreground-mask.png:ro
+          - /home/dwu/media/fake-webcam/images/matrix.gif:/src/background.jpg:ro
         devices:
             # input (webcam)
-            - /dev/video3:/dev/video0
+            - /dev/video0:/dev/video0
             # output (virtual webcam)
-            - /dev/video0:/dev/video2
+            - /dev/video2:/dev/video2
         depends_on:
             - bodypix
         entrypoint: [ 'python3', '-u', 'fake.py', '-B', 'http://bodypix:9000/', "--no-foreground"]

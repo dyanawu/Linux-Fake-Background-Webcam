@@ -1,0 +1,23 @@
+version: '3'
+services:
+    bodypix:
+        image: bodypix
+        build:
+            context: ./bodypix
+        read_only: true
+
+    fakecam:
+        image: fakecam
+        build:
+            context: ./fakecam
+        read_only: true
+        volumes:
+          - /home/dwu/media/fake-webcam/images/dvd.gif:/src/background.jpg:ro
+        devices:
+            # input (webcam)
+            - /dev/video0:/dev/video0
+            # output (virtual webcam)
+            - /dev/video2:/dev/video2
+        depends_on:
+            - bodypix
+        entrypoint: [ 'python3', '-u', 'fake.py', '-B', 'http://bodypix:9000/', "--no-foreground"]
